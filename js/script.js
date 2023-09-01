@@ -82,6 +82,9 @@ async function displayMoviedetails() {
 
   const movie = await fetchAPIData(`movie/${movieId}`);
 
+  // Overlay For Backgroud Image
+  displayBackgroundImage("movie", movie.backdrop_path);
+
   const div = document.createElement("div");
 
   div.innerHTML = `
@@ -127,17 +130,47 @@ async function displayMoviedetails() {
 <div class="details-bottom">
   <h2>Movie Info</h2>
   <ul>
-    <li><span class="text-secondary">Budget:</span> $${addCommasToNumber(movie.budget)}</li>
-    <li><span class="text-secondary">Revenue:</span> $${addCommasToNumber(movie.revenue)}</li>
-    <li><span class="text-secondary">Runtime:</span> ${movie.runtime} minutes</li>
+    <li><span class="text-secondary">Budget:</span> $${addCommasToNumber(
+      movie.budget
+    )}</li>
+    <li><span class="text-secondary">Revenue:</span> $${addCommasToNumber(
+      movie.revenue
+    )}</li>
+    <li><span class="text-secondary">Runtime:</span> ${
+      movie.runtime
+    } minutes</li>
     <li><span class="text-secondary">Status:</span> ${movie.status}</li>
   </ul>
   <h4>Production Companies</h4>
-  <div class="list-group">${movie.production_companies.map((company) => `<span>${company.name}</span>`).join('')}</div>
+  <div class="list-group">${movie.production_companies
+    .map((company) => `<span>${company.name}</span>`)
+    .join("")}</div>
 </div>
   `;
 
   document.querySelector("#movie-details").appendChild(div);
+}
+
+// Display Backdrop on Details Pages
+function displayBackgroundImage(type, backgroundPath) {
+  const OverlayDiv = document.createElement("div");
+  OverlayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${backgroundPath})`;
+  OverlayDiv.style.backgroundSize = "cover";
+  OverlayDiv.style.backgroundPosition = "center";
+  OverlayDiv.style.backgroundRepeat = "no-repeat";
+  OverlayDiv.style.height = "100vh";
+  OverlayDiv.style.width = "100vw";
+  OverlayDiv.style.position = "absolute";
+  OverlayDiv.style.top = "0";
+  OverlayDiv.style.left = "0";
+  OverlayDiv.style.zIndex = "-1";
+  OverlayDiv.style.opacity = "0.3";
+
+  if (type === "movie") {
+    document.querySelector("#movie-details").appendChild(OverlayDiv);
+  } else {
+    document.querySelector("#show-details").appendChild(OverlayDiv);
+  }
 }
 
 // Fetch data from TMdb API
@@ -166,7 +199,7 @@ function hideSpinner() {
   document.querySelector(".spinner").classList.remove("show");
 }
 
-// Highlight active link 
+// Highlight active link
 function highlightActiveLink() {
   const links = document.querySelectorAll(".nav-link");
   links.forEach((link) => {
@@ -177,7 +210,7 @@ function highlightActiveLink() {
 }
 
 function addCommasToNumber(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // Init App
